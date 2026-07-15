@@ -3,19 +3,19 @@ services:
     image: postgres:15-alpine
     container_name: local_postgres
     environment:
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: mysecretpassword
-      POSTGRES_DB: app_database
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
     volumes:
       - phase_database:/var/lib/postgresql/data
 
   backend:
     build: ./backend
     environment:
-      DB_HOST: database
-      DB_NAME: app_database
-      DB_USER: postgres
-      DB_PASSWORD: mysecretpassword      
+      DB_HOST: ${DB_HOST}
+      DB_NAME: ${DB_NAME}
+      DB_USER: ${DB_USER}
+      DB_PASSWORD: ${DB_PASSWORD}      
     depends_on:
       - database
   backend-1:
@@ -34,7 +34,7 @@ services:
     image: prometheuscommunity/postgres-exporter:v0.15.0
     container_name: postgres_exporter
     environment:
-      - DATA_SOURCE_NAME=postgresql://postgres:mysecretpassword@database:5432/app_database?sslmode=disable
+      - DATA_SOURCE_NAME=${POSTGRES_USER}://postgres:${POSTGRES_PASSWORD}@database:5432/${POSTGRES_DB}?sslmode=disable
     ports:
      - "9187:9187"
     depends_on:

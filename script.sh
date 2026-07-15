@@ -5,16 +5,14 @@ echo "Удаляем старые контейнеры..."
 docker compose down
 
 # 2. Запускаем сборку и старт всех контейнеров в фоновом режиме (-d)
-echo "Начинаем сборку и запуск приложения..."
-docker compose up -d --build
+echo "Начинаем сборку и запуск приложения (3 копии бэкенда)..."
+docker compose up -d --build --scale backend=3
 
 echo "[INFO] Ожидание готовности Базы Данных (порт 5432)..."
 
-# 3. Цикл UNTIL (выполнять, ПОКА команда внутри возвращает ошибку)
-# Мы просим local_backend проверить порт 5432 у хоста database.
-# 2>/dev/null глушит лишние системные ошибки в терминале.
-# grep -q "open" ищет слово "open" в ответе nmap в тихом режиме.
-until docker exec real_project-backend-1 nmap -p 5432 database 2>/dev/null | grep -q "open"; do
+# 3. Проверяем готовность базы данных через pg_isready внутри самого контейнера БД
+# Флаг -h указывает хост (localhost внутри контейнера), -U - пользователя
+until docker exec local_postgres pg_isready -h localhost -U "$POSTGRES_USER" 2>/dev/null | grep -q "accepting connections"; do
     echo "[WAIT] База данных еще инициализируется, ждем 1 секунду..."
     sleep 1
 done

@@ -1,0 +1,6 @@
+# .gitlab-ci.yml
+image: node:latest
+test: 
+  script: 
+    - echo "Запускаем тесты"
+    - npm test

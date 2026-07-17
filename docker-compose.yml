@@ -37,6 +37,8 @@ services:
     ports:
       - "9090:9090"
     depends_on:
+      -depends_on:
+      - nginx_exporter
       - postgres_exporter
 
   nginx:
@@ -57,5 +59,19 @@ services:
       - "9113:9113"
     depends_on:
       - nginx
+  node_exporter: 
+    image: prom/node-exporter:v1.6.0
+    container_name: node_exporter
+    volumes:
+      - /proc:/host/proc:ro
+      - /sys:/host/sys:ro
+      - /:/roofs:ro
+    command: 
+      - '--path.procfs=/host/poc'
+      - '--path.sysfs=/host/sys'
+      - '-path.roofs=/roofs'
+    ports:
+      - "9100:9100"
+
 volumes:
   phase_database:

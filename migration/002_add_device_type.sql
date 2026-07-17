@@ -1,0 +1,1 @@
+ALTER TABLE visits ADD COLUMN device_type VARCHAR(50) DEFAULT 'desktop'

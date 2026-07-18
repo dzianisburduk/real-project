@@ -40,11 +40,12 @@ integration_test_job:
   script:
     - echo "Running integration tests.."
 
+
 deploy_to_prod:
   stage: deploy
   script: 
-    - echo "Deploying to $123.."
-    - echo "Using token $456"
+    - echo "Deploying to $PROD_SERVER_IP..."
+    - echo "Using token: $PROD_API_TOKEN"
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 

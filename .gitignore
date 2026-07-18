@@ -1,0 +1,6 @@
+.env
+backups
+prometheus/grafana_token
+BACKUP_DIR
+BACKUP_FILE
+cron_backup.log

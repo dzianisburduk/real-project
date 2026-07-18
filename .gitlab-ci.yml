@@ -1,0 +1,40 @@
+default:
+  image: python:3.10-slim
+
+variables:
+  PIP_CACHE_DIR: "$CI_PROJECT_DIR/.cache/pip"
+
+stages:
+  - build
+  - test
+
+build_job:
+  stage: build
+  cache:
+    key:
+      files:
+        - requirements.txt
+    paths:
+      - .cache/pip
+  script:
+    - pip install -r requirements.txt
+
+unit_test_job:
+  stage: test
+  cache:
+    key:
+      files:
+        - requirements.txt
+    paths:
+      - .cache/pip
+  script:
+    - pip install -r requirements.txt
+    - pytest --junitxml=report.xml
+  artifacts:
+    paths:
+      - report.xml
+
+integration_test_job:
+  stage: test
+  script:
+    - echo "Running integration tests.."

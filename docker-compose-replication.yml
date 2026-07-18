@@ -1,0 +1,36 @@
+services:
+  pg-master:
+    image: postgres:15-alpine
+    container_name: pg_master
+    ports:
+      - '5432:5432'
+    environment:
+      POSTGRES_DB: app_database
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: master_password
+      # Указываем Postgres автоматически разрешить доверенное подключение (trust) ко всем базам, включая репликацию
+      POSTGRES_HOST_AUTH_METHOD: trust
+    command: >
+      postgres
+      -c wal_level=replica
+      -c max_wal_senders=10
+      -c max_connections=100
+
+  pg-slave:
+    image: postgres:15-alpine
+    container_name: pg_slave
+    ports:
+      - '5433:5432'
+    depends_on:
+      - pg-master
+    environment:
+      PGPASSWORD: master_password
+    user: postgres
+    command: >
+      bash -c "
+      until pg_isready -h pg-master -p 5432 -U postgres; do sleep 1; done;
+      if [ ! -s /var/lib/postgresql/data/PG_VERSION ]; then
+        pg_basebackup -h pg-master -D /var/lib/postgresql/data -U postgres -Fp -Xs -P -R
+      fi;
+      exec postgres
+      "

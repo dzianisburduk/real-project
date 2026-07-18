@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Мониторинг визитов</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f4f7f6;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+        .card {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            text-align: center;
+            max-width: 350px;
+            width: 100%;
+        }
+        h1 {
+            color: #333;
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        .counter-box {
+            font-size: 48px;
+            font-weight: bold;
+            color: #2ecc71;
+            margin: 20px 0;
+        }
+        .status {
+            font-size: 14px;
+            color: #7f8c8d;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="card">
+        <h1>Счетчик посещений</h1>
+        <p class="status">Данные загружаются из бэкенда...</p>
+        <div class="counter-box" id="counter">-</div>
+        <p class="status">Обновите страницу, чтобы увеличить счетчик</p>
+    </div>
+
+    <script>
+        // Функция, которая стучится в Nginx на /api/visit
+        async function fetchVisits() {
+            try {
+                // Запрос отправляется на относительный путь. Nginx перехватит его благодаря "location /api"
+                const response = await fetch('/api/visit');
+                if (!response.ok) {
+                    throw new Error('Ошибка сети при ответе от API');
+                }
+                const data = await response.json();
+                
+                // Если бэкенд вернул число, красиво выводим его в наш div
+                if (data.count !== undefined) {
+                    document.getElementById('counter').innerText = data.count;
+                } else if (data.error) {
+                    document.getElementById('counter').innerText = 'Ошибка';
+                    console.error('Ошибка БД:', data.error);
+                }
+            } catch (error) {
+                document.getElementById('counter').innerText = '❌';
+                console.error('Не удалось достучаться до API:', error);
+            }
+        }
+
+        // Запускаем функцию сразу при загрузке страницы в браузере
+        window.onload = fetchVisits;
+    </script>
+
+</body>
+</html>

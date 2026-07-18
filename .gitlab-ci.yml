@@ -7,6 +7,7 @@ variables:
 stages:
   - build
   - test
+  - deploy
 
 build_job:
   stage: build
@@ -38,3 +39,12 @@ integration_test_job:
   stage: test
   script:
     - echo "Running integration tests.."
+
+deploy_to_prod:
+  stage: deploy
+  script: 
+    - echo "Deploying to $123.."
+    - echo "Using token $456"
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+

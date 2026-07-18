@@ -43,9 +43,9 @@ integration_test_job:
 
 deploy_to_prod:
   stage: deploy
-  script: 
+  script:
     - echo "Deploying to $PROD_SERVER_IP..."
-    - echo "Using token: $PROD_API_TOKEN"
+    - 'echo "Using token: $PROD_API_TOKEN"''
   rules:
     - if: $CI_COMMIT_BRANCH == "main"
 

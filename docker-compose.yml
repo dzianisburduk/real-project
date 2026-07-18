@@ -37,7 +37,6 @@ services:
     ports:
       - "9090:9090"
     depends_on:
-      -depends_on:
       - nginx_exporter
       - postgres_exporter
 

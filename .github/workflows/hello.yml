@@ -1,0 +1,24 @@
+name: My fisrt Workflow 
+
+on:
+  push: 
+    branches: ["main", "practika"]
+  workflow_dispatch: 
+
+jobs:
+  demo-job:
+    runs-on: ubuntu-latest
+
+
+    steps:
+      - name: Check out repository code 
+        uses: actions/checkout@v4
+      
+      - name: Run a simple command 
+        run: echo "Привет из GitHub Actions!"
+      
+      - name: Check system info 
+        run: |
+          echo "Текущая ветка: ${{ github.ref}}"
+          echo "Кто закоммитил: ${{ github.actor }}"
+          python3 --version
